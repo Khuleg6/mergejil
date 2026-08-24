@@ -155,18 +155,18 @@ export default function MBTIModule({
             </button>
           </div>
           <p className="text-xs text-muted-foreground mt-2">
-            Эндээс таны MBTI төрлийг сонгоно уу.
+            Эндээс өөрийн MBTI төрлийг сонгоно уу.
           </p>
         </div>
 
         {/* External 16Personalities option */}
         <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 card-shadow-md mb-6">
           <h3 className="text-lg font-semibold mb-3">
-            16Personalities тестээр үр дүн авна
+            16Personalities тестээр өгөх
           </h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Хэрэв 16Personalities-д авсан үр дүн байгаа бол доорх хэсэгт үр
-            дүнгээ paste хийнэ үү (эсвэл шууд 4 үсэгтэй MBTI кодыг оруулна).
+            16Personalities-аас авсан үр дүн байгаа бол дээрх хэсэгт оруул!
+            Хэрэв байхгүй бол тестээ өгнө үү!.
           </p>
           <div className="flex gap-2">
             <a
