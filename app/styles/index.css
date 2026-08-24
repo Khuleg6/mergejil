@@ -1,0 +1,5 @@
+/*
+ * Legacy entry point kept for imports outside the App Router.
+ * The project-wide Tailwind v4 theme lives in app/globals.css.
+ */
+@import "../globals.css";

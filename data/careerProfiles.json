@@ -1,0 +1,72 @@
+[
+  {
+    "id": "software_engineer",
+    "name": "Software Engineer",
+    "ideal_mbti": "INTJ",
+    "description": "Designs systems, solves complex problems and prefers structured, logical work.",
+    "tags": ["technical", "analytical", "independent"]
+  },
+  {
+    "id": "product_manager",
+    "name": "Product Manager",
+    "ideal_mbti": "ENTJ",
+    "description": "Leads product strategy, organizes teams and communicates vision.",
+    "tags": ["leadership", "communication", "strategic"]
+  },
+  {
+    "id": "ux_designer",
+    "name": "UX Designer",
+    "ideal_mbti": "INFP",
+    "description": "Focuses on human-centered design and empathetic research.",
+    "tags": ["creative", "empathetic", "user-focused"]
+  },
+  {
+    "id": "data_scientist",
+    "name": "Data Scientist",
+    "ideal_mbti": "INTP",
+    "description": "Works with data, builds models and values experimentation.",
+    "tags": ["analytical", "technical", "curious"]
+  },
+  {
+    "id": "teacher",
+    "name": "Teacher / Educator",
+    "ideal_mbti": "ENFJ",
+    "description": "Explains ideas, supports learners and builds connections.",
+    "tags": ["people", "communicative", "supportive"]
+  },
+  {
+    "id": "sales_representative",
+    "name": "Sales Representative",
+    "ideal_mbti": "ESFP",
+    "description": "Engages customers, persuades and excels in dynamic social settings.",
+    "tags": ["people", "energetic", "persuasive"]
+  },
+  {
+    "id": "project_manager",
+    "name": "Project Manager",
+    "ideal_mbti": "ESTJ",
+    "description": "Organizes tasks, enforces timelines and coordinates resources.",
+    "tags": ["organized", "decisive", "leadership"]
+  },
+  {
+    "id": "marketing_specialist",
+    "name": "Marketing Specialist",
+    "ideal_mbti": "ENFP",
+    "description": "Creates campaigns, connects with audiences and thrives on new ideas.",
+    "tags": ["creative", "communicative", "adaptive"]
+  },
+  {
+    "id": "hr_specialist",
+    "name": "HR Specialist",
+    "ideal_mbti": "ISFJ",
+    "description": "Supports people, handles processes and values stability.",
+    "tags": ["supportive", "detail-oriented", "people"]
+  },
+  {
+    "id": "consultant",
+    "name": "Consultant",
+    "ideal_mbti": "ENTP",
+    "description": "Solves varied business problems and enjoys flexible, idea-driven work.",
+    "tags": ["problem-solver", "adaptive", "communicative"]
+  }
+]
