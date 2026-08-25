@@ -159,11 +159,10 @@ export default function MBTIModule({
         {!testMode && !testDone && (
           <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 card-shadow-md mb-6">
             <h3 className="text-lg font-semibold mb-3">
-              16Personalities тестээр өгөх
+              MBTI тест өгөх
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              16Personalities-аас авсан үр дүн байгаа бол дээрх хэсэгт оруул!
-              Хэрэв байхгүй бол тестээ өгнө үү!
+              Манай суулгасан MBTI тестийг өгч, өөрийн төрлийг тодорхойлоорой!
             </p>
             <button
               onClick={() => { setTestMode(true); setCurrentQ(0); setTestAnswers({}); }}
