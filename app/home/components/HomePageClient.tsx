@@ -26,6 +26,7 @@ const MODULES = [
     xp: "+120 XP",
     color: "bg-blue-50 text-blue-700 border-blue-100",
     dot: "bg-blue-500",
+    moduleKey: "mbti",
   },
   {
     id: "home-mod-iq",
@@ -40,6 +41,7 @@ const MODULES = [
     xp: "+150 XP",
     color: "bg-amber-50 text-amber-700 border-amber-100",
     dot: "bg-amber-500",
+    moduleKey: "iq",
   },
   {
     id: "home-mod-skills",
@@ -54,6 +56,7 @@ const MODULES = [
     xp: "+100 XP",
     color: "bg-emerald-50 text-emerald-700 border-emerald-100",
     dot: "bg-emerald-500",
+    moduleKey: "skills",
   },
 ];
 
@@ -84,12 +87,62 @@ const TESTIMONIALS = [
   },
 ];
 
+type ProgressStatus = "completed" | "active" | "pending";
+
+function getModuleProgress(moduleKey: string, completedModules: string[]): ProgressStatus {
+  if (completedModules.includes(moduleKey)) return "completed";
+  const order = ["mbti", "iq", "skills"];
+  const idx = order.indexOf(moduleKey);
+  const prevCompleted = idx === 0 || completedModules.includes(order[idx - 1]);
+  if (prevCompleted && !completedModules.includes(moduleKey)) return "active";
+  return "pending";
+}
+
+function ProgressBadge({ status }: { status: ProgressStatus }) {
+  if (status === "completed") {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+          <path d="M2 5L4.5 7.5L8 3" stroke="#15803d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        Дууссан
+      </span>
+    );
+  }
+  if (status === "active") {
+    return (
+      <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+        <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+        Идэвхтэй
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-muted text-muted-foreground border border-border">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <circle cx="5" cy="5" r="3.5" stroke="currentColor" strokeWidth="1.2" />
+      </svg>
+      Хүлээгдэж байна
+    </span>
+  );
+}
+
 export default function HomePageClient() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [completedModules, setCompletedModules] = useState<string[]>([]);
 
   useEffect(() => {
     setMounted(true);
+    // Read completed modules from localStorage (set by AssessmentPageClient)
+    try {
+      const stored = localStorage.getItem("completedModules");
+      if (stored) {
+        setCompletedModules(JSON.parse(stored));
+      }
+    } catch {
+      // ignore
+    }
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % TESTIMONIALS?.length);
     }, 4000);
@@ -207,33 +260,55 @@ export default function HomePageClient() {
               <p className="text-muted-foreground mt-2 max-w-lg">Дөнгөж 33 минутад таны карьерийн бүрэн профайл бэлэн болно</p>
             </div>
 
-            {/* Bento-style module cards */}
+            {/* Bento-style module cards — linked to assessment */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {MODULES?.map((mod, idx) => (
-                <div
-                  key={mod?.id}
-                  className={`relative bg-card border rounded-2xl p-6 card-shadow hover:card-shadow-md transition-all duration-200 ${idx === 1 ? "md:mt-6" : ""}`}
-                >
-                  <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl border ${mod?.color} mb-4`}>
-                    {mod?.icon}
-                  </div>
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="font-bold text-foreground text-base">{mod?.label}</h3>
-                    <span className="text-xs font-semibold text-accent bg-accent/10 px-2 py-0.5 rounded-full">{mod?.xp}</span>
-                  </div>
-                  <p className="text-muted-foreground text-sm mb-4">{mod?.desc}</p>
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${mod?.dot}`} />
-                    <span className="text-xs text-muted-foreground">{mod?.duration}</span>
-                    <span className="text-xs text-muted-foreground">•</span>
-                    <span className="text-xs font-semibold text-primary">Модуль {idx + 1}/3</span>
-                  </div>
-                  {/* Step number watermark */}
-                  <div className="absolute top-4 right-5 text-6xl font-black text-muted/40 select-none leading-none">
-                    {idx + 1}
-                  </div>
-                </div>
-              ))}
+              {MODULES?.map((mod, idx) => {
+                const status = mounted ? getModuleProgress(mod.moduleKey, completedModules) : "pending";
+                const isCompleted = status === "completed";
+                return (
+                  <Link
+                    key={mod?.id}
+                    href="/career-assessment"
+                    className={`relative bg-card border rounded-2xl p-6 card-shadow hover:card-shadow-md transition-all duration-200 group cursor-pointer block ${idx === 1 ? "md:mt-6" : ""} ${isCompleted ? "border-emerald-200" : "border-border hover:border-primary/30"}`}
+                  >
+                    <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl border ${mod?.color} mb-4`}>
+                      {mod?.icon}
+                    </div>
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="font-bold text-foreground text-base">{mod?.label}</h3>
+                      <span className="text-xs font-semibold text-accent bg-accent/10 px-2 py-0.5 rounded-full">{mod?.xp}</span>
+                    </div>
+                    <p className="text-muted-foreground text-sm mb-3">{mod?.desc}</p>
+
+                    {/* Progress badge */}
+                    <div className="mb-4">
+                      <ProgressBadge status={status} />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${mod?.dot}`} />
+                        <span className="text-xs text-muted-foreground">{mod?.duration}</span>
+                        <span className="text-xs text-muted-foreground">•</span>
+                        <span className="text-xs font-semibold text-primary">Модуль {idx + 1}/3</span>
+                      </div>
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 14 14"
+                        fill="none"
+                        className="text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-150"
+                      >
+                        <path d="M3 7H11M7.5 4L11 7L7.5 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    {/* Step number watermark */}
+                    <div className="absolute top-4 right-5 text-6xl font-black text-muted/40 select-none leading-none">
+                      {idx + 1}
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
 
             {/* Flow arrow */}

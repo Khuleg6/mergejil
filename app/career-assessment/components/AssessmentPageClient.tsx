@@ -26,18 +26,29 @@ export default function AssessmentPageClient() {
   });
   const router = useRouter();
 
+  const saveProgress = (modules: string[]) => {
+    try {
+      localStorage.setItem("completedModules", JSON.stringify(modules));
+    } catch {
+      // ignore
+    }
+  };
+
   const handleMBTIComplete = (mbtiAnswers: Record<string, string>) => {
     setAnswers((prev) => ({ ...prev, mbti: mbtiAnswers }));
+    saveProgress(["mbti"]);
     setCurrentModule("mbti-complete");
   };
 
   const handleIQComplete = (iqAnswers: Record<string, string>) => {
     setAnswers((prev) => ({ ...prev, iq: iqAnswers }));
+    saveProgress(["mbti", "iq"]);
     setCurrentModule("iq-complete");
   };
 
   const handleSkillsComplete = (skillsAnswers: Record<string, string>) => {
     setAnswers((prev) => ({ ...prev, skills: skillsAnswers }));
+    saveProgress(["mbti", "iq", "skills"]);
     setCurrentModule("skills-complete");
   };
 
