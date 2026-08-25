@@ -9,13 +9,7 @@ import ModuleComplete from "./ModuleComplete";
 import { useRouter } from "next/navigation";
 
 export type ModuleState =
-  | "mbti"
-  | "mbti-complete"
-  | "iq"
-  | "iq-complete"
-  | "skills"
-  | "skills-complete"
-  | "submitting";
+  | "mbti" |"mbti-complete" |"iq" |"iq-complete" |"skills" |"skills-complete" |"submitting";
 
 export type AssessmentAnswers = {
   mbti: Record<string, string>;
@@ -119,9 +113,7 @@ export default function AssessmentPageClient() {
             subtitle="Таны карьерийн профайл боловсруулагдаж байна..."
             xp={100}
             nextLabel={
-              currentModule === "submitting"
-                ? "Боловсруулж байна..."
-                : "Карьерийн профайл харах →"
+              currentModule === "submitting" ?"Боловсруулж байна..." :"Карьерийн профайл харах →"
             }
             onNext={handleFinalSubmit}
             isLoading={currentModule === "submitting"}

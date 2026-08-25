@@ -160,11 +160,8 @@ export default function RoadmapSection({
               >
                 <div
                   className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 ${
-                    active.status === "current"
-                      ? "bg-success"
-                      : active.status === "upcoming"
-                        ? "bg-info"
-                        : "bg-muted-foreground"
+                    active.status === "current" ?"bg-success"
+                      : active.status === "upcoming" ?"bg-info" :"bg-muted-foreground"
                   }`}
                 >
                   {active.status === "current" ? (
@@ -240,8 +237,7 @@ export default function RoadmapSection({
             key={badge.id}
             className={`p-4 rounded-2xl border flex items-center gap-3 ${
               badge.earned
-                ? "bg-amber-50 border-amber-200"
-                : "bg-muted border-border opacity-60"
+                ? "bg-amber-50 border-amber-200" :"bg-muted border-border opacity-60"
             }`}
           >
             <div

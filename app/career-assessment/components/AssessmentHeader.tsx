@@ -78,8 +78,7 @@ export default function AssessmentHeader({
                       isActive
                         ? "bg-primary text-white"
                         : isDone
-                          ? "bg-success/10 text-success"
-                          : "bg-muted text-muted-foreground"
+                          ? "bg-success/10 text-success" :"bg-muted text-muted-foreground"
                     }`}
                   >
                     <div
@@ -87,8 +86,7 @@ export default function AssessmentHeader({
                         isActive
                           ? "bg-white/20"
                           : isDone
-                            ? "bg-success/20"
-                            : "bg-border"
+                            ? "bg-success/20" :"bg-border"
                       }`}
                     >
                       {isDone ? (
