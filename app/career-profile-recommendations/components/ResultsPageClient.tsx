@@ -57,8 +57,7 @@ export default function ResultsPageClient() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all duration-150 flex-shrink-0 ${
                   activeTab === tab.key
-                    ? "bg-primary text-white"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    ? "bg-primary text-white" :"text-muted-foreground hover:text-foreground hover:bg-muted"
                 }`}
               >
                 <span>{tab.icon}</span>

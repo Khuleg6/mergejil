@@ -53,8 +53,7 @@ export default function IQModule({
     timeLeft <= 10
       ? "text-danger"
       : timeLeft <= 20
-        ? "text-warning"
-        : "text-success";
+        ? "text-warning" :"text-success";
   const timeBarColor =
     timeLeft <= 10 ? "#DC2626" : timeLeft <= 20 ? "#D97706" : "#16A34A";
 
@@ -119,8 +118,7 @@ export default function IQModule({
                 }}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all duration-150 flex-shrink-0 ${
                   isActive
-                    ? "bg-primary text-white"
-                    : "bg-muted text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    ? "bg-primary text-white" :"bg-muted text-muted-foreground hover:bg-secondary hover:text-foreground"
                 }`}
               >
                 <span>{cat.icon}</span>
@@ -163,16 +161,14 @@ export default function IQModule({
                   onClick={() => handleSelect(option.id)}
                   className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 active:scale-[0.98] ${
                     isSelected
-                      ? "border-primary bg-primary/5"
-                      : "border-border bg-card hover:border-primary/30 hover:bg-secondary/50"
+                      ? "border-primary bg-primary/5" :"border-border bg-card hover:border-primary/30 hover:bg-secondary/50"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all duration-200 ${
                         isSelected
-                          ? "border-primary bg-primary"
-                          : "border-border"
+                          ? "border-primary bg-primary" :"border-border"
                       }`}
                     >
                       {isSelected && (
@@ -216,8 +212,7 @@ export default function IQModule({
             {currentIndex === iqQuestions.length - 1
               ? "Дуусгах"
               : isAnswered
-                ? "Дараагийн"
-                : "Алгасах"}
+                ? "Дараагийн" :"Алгасах"}
             <ChevronRight size={18} />
           </button>
         </div>

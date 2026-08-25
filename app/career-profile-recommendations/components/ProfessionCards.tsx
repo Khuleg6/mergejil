@@ -129,8 +129,7 @@ export default function ProfessionCards({
               key={prof.id}
               className={`bg-card border rounded-2xl overflow-hidden card-shadow transition-all duration-200 ${
                 isExpanded
-                  ? "border-primary"
-                  : "border-border hover:border-primary/30"
+                  ? "border-primary" :"border-border hover:border-primary/30"
               }`}
             >
               {/* Card header */}
@@ -147,8 +146,7 @@ export default function ProfessionCards({
                         : prof.rank === 2
                           ? "bg-slate-100 text-slate-700"
                           : prof.rank === 3
-                            ? "bg-orange-100 text-orange-700"
-                            : "bg-muted text-muted-foreground"
+                            ? "bg-orange-100 text-orange-700" :"bg-muted text-muted-foreground"
                     }`}
                   >
                     {prof.rank === 1
@@ -200,8 +198,7 @@ export default function ProfessionCards({
                             prof.matchPct >= 90
                               ? "#16A34A"
                               : prof.matchPct >= 80
-                                ? "#2563EB"
-                                : "#D97706",
+                                ? "#2563EB" :"#D97706",
                         }}
                       />
                     </div>

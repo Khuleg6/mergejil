@@ -76,8 +76,7 @@ export default function SkillsModule({
                 key={cat.id}
                 className={`p-3 rounded-xl border transition-all duration-200 ${
                   isActive
-                    ? "border-primary bg-primary/5"
-                    : "border-border bg-card"
+                    ? "border-primary bg-primary/5" :"border-border bg-card"
                 }`}
               >
                 <div className="flex items-center gap-1.5 mb-2">
@@ -138,8 +137,7 @@ export default function SkillsModule({
                   onClick={() => handleSelect(option.id)}
                   className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 active:scale-[0.98] ${
                     isSelected
-                      ? "border-accent bg-accent/5"
-                      : "border-border bg-card hover:border-accent/40 hover:bg-secondary/50"
+                      ? "border-accent bg-accent/5" :"border-border bg-card hover:border-accent/40 hover:bg-secondary/50"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -204,8 +202,7 @@ export default function SkillsModule({
             className="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white gradient-primary rounded-xl disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90 active:scale-[0.98] transition-all duration-150"
           >
             {currentIndex === skillsQuestions.length - 1
-              ? "Дуусгах"
-              : "Дараагийн"}
+              ? "Дуусгах" :"Дараагийн"}
             <ChevronRight size={18} />
           </button>
         </div>

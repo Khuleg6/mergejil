@@ -33,7 +33,9 @@ export default function AssessmentHeader({
   answers: AssessmentAnswers;
 }) {
   const totalAnswered =
-    Object.keys(answers.mbti).length +
+    (answers.mbti.mbtiManual === "true"
+      ? 20
+      : Object.keys(answers.mbti).filter((k) => k !== "mbtiType").length) +
     Object.keys(answers.iq).length +
     Object.keys(answers.skills).length;
   const totalQuestions = 47;
@@ -78,8 +80,7 @@ export default function AssessmentHeader({
                       isActive
                         ? "bg-primary text-white"
                         : isDone
-                          ? "bg-success/10 text-success"
-                          : "bg-muted text-muted-foreground"
+                          ? "bg-success/10 text-success" :"bg-muted text-muted-foreground"
                     }`}
                   >
                     <div
@@ -87,8 +88,7 @@ export default function AssessmentHeader({
                         isActive
                           ? "bg-white/20"
                           : isDone
-                            ? "bg-success/20"
-                            : "bg-border"
+                            ? "bg-success/20" :"bg-border"
                       }`}
                     >
                       {isDone ? (

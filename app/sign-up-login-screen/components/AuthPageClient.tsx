@@ -43,9 +43,7 @@ export default function AuthPageClient() {
             <button
               onClick={() => setMode("login")}
               className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
-                mode === "login"
-                  ? "bg-card text-primary card-shadow font-semibold"
-                  : "text-muted-foreground hover:text-foreground"
+                mode === "login" ?"bg-card text-primary card-shadow font-semibold" :"text-muted-foreground hover:text-foreground"
               }`}
             >
               Нэвтрэх
@@ -53,9 +51,7 @@ export default function AuthPageClient() {
             <button
               onClick={() => setMode("register")}
               className={`flex-1 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
-                mode === "register"
-                  ? "bg-card text-primary card-shadow font-semibold"
-                  : "text-muted-foreground hover:text-foreground"
+                mode === "register" ?"bg-card text-primary card-shadow font-semibold" :"text-muted-foreground hover:text-foreground"
               }`}
             >
               Бүртгүүлэх
