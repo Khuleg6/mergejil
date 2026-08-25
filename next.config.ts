@@ -2,7 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ['mergejil4874.builtwithrocket.new'],
-  turbopack: {},
   webpack(config, { dev }) {
     if (dev) {
       config.module.rules.push({

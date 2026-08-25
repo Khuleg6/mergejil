@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import ResultsHeader from "./ResultsHeader";
 import ProfileHeroSection from "./ProfileHeroSection";
 import IQSection from "./IQSection";
@@ -11,41 +12,149 @@ import WorkEnvironmentSection from "./WorkEnvironmentSection";
 import RoadmapSection from "./RoadmapSection";
 import { PROFILE_DATA } from "./resultsData";
 
+interface SessionUser {
+  userId: number;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+interface AssessmentResults {
+  hasResults: boolean;
+  mbtiType?: string;
+  iqScore?: number;
+  skillsScores?: Record<string, number>;
+  completedAt?: string;
+}
+
 export default function ResultsPageClient() {
+  const router = useRouter();
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const [assessmentResults, setAssessmentResults] = useState<AssessmentResults | null>(null);
   const [activeTab, setActiveTab] = useState<
     "profile" | "professions" | "education" | "roadmap"
   >("profile");
 
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          setIsAuthenticated(true);
+          setSessionUser(data.user);
+          // Fetch assessment results from DB
+          const resultsRes = await fetch("/api/assessment/results");
+          if (resultsRes.ok) {
+            const resultsData = await resultsRes.json();
+            setAssessmentResults(resultsData);
+          }
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch {
+        setIsAuthenticated(false);
+      } finally {
+        setAuthChecked(true);
+      }
+    }
+    checkAuth();
+  }, []);
+
   const tabs = [
-    {
-      id: "tab-profile",
-      key: "profile" as const,
-      label: "Профайл",
-      icon: "👤",
-    },
-    {
-      id: "tab-professions",
-      key: "professions" as const,
-      label: "Мэргэжлүүд",
-      icon: "💼",
-    },
-    {
-      id: "tab-education",
-      key: "education" as const,
-      label: "Боловсрол",
-      icon: "🎓",
-    },
-    {
-      id: "tab-roadmap",
-      key: "roadmap" as const,
-      label: "Roadmap",
-      icon: "🗺️",
-    },
+    { id: "tab-profile", key: "profile" as const, label: "Профайл", icon: "👤" },
+    { id: "tab-professions", key: "professions" as const, label: "Мэргэжлүүд", icon: "💼" },
+    { id: "tab-education", key: "education" as const, label: "Боловсрол", icon: "🎓" },
+    { id: "tab-roadmap", key: "roadmap" as const, label: "Roadmap", icon: "🗺️" },
   ];
+
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+        <div className="w-full max-w-md text-center">
+          <div className="w-20 h-20 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+              <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-foreground mb-2">
+            Үр дүнг харахын тулд нэвтэрнэ үү
+          </h1>
+          <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
+            Таны MBTI, IQ болон ур чадварын үр дүн бэлэн байна. Харахын тулд эхлээд нэвтэрнэ үү эсвэл бүртгүүлнэ үү.
+          </p>
+          <div className="relative mb-8 rounded-2xl overflow-hidden border border-border">
+            <div className="p-6 bg-card space-y-3 blur-sm select-none pointer-events-none" aria-hidden="true">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-primary/20" />
+                <div className="space-y-1.5 flex-1">
+                  <div className="h-4 bg-muted rounded w-2/3" />
+                  <div className="h-3 bg-muted rounded w-1/2" />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-16 bg-muted rounded-xl" />
+                ))}
+              </div>
+              <div className="h-24 bg-muted rounded-xl" />
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center bg-card/40 backdrop-blur-[1px]">
+              <span className="text-xs font-semibold text-muted-foreground bg-card border border-border px-3 py-1.5 rounded-full shadow">
+                🔒 Нэвтэрсний дараа харагдана
+              </span>
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => router.push("/sign-up-login-screen")}
+              className="w-full py-3.5 px-6 gradient-primary text-white font-semibold text-sm rounded-xl hover:opacity-90 active:scale-[0.98] transition-all duration-150"
+            >
+              Нэвтрэх / Бүртгүүлэх
+            </button>
+            <button
+              onClick={() => router.push("/career-assessment")}
+              className="w-full py-3 px-6 border border-border text-muted-foreground font-medium text-sm rounded-xl hover:bg-muted transition-all duration-150"
+            >
+              ← Тестэд буцах
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Build profile data merging DB results with static profile data
+  const profileData = {
+    ...PROFILE_DATA,
+    user: {
+      ...PROFILE_DATA.user,
+      name: sessionUser
+        ? `${sessionUser.lastName || ""} ${sessionUser.firstName || ""}`.trim() || sessionUser.email
+        : PROFILE_DATA.user.name,
+    },
+    mbti: assessmentResults?.mbtiType
+      ? { ...PROFILE_DATA.mbti, type: assessmentResults.mbtiType }
+      : PROFILE_DATA.mbti,
+    iq: assessmentResults?.iqScore
+      ? { ...PROFILE_DATA.iq, score: assessmentResults.iqScore }
+      : PROFILE_DATA.iq,
+  };
 
   return (
     <div className="min-h-screen bg-background">
-      <ResultsHeader user={PROFILE_DATA.user} />
+      <ResultsHeader user={profileData.user} />
 
       {/* Tab navigation */}
       <div className="sticky top-0 z-30 bg-card border-b border-border">
@@ -71,9 +180,9 @@ export default function ResultsPageClient() {
       <main className="max-w-screen-2xl mx-auto px-4 lg:px-8 xl:px-10 py-8">
         {activeTab === "profile" && (
           <div className="space-y-8">
-            <ProfileHeroSection mbti={PROFILE_DATA.mbti} />
+            <ProfileHeroSection mbti={profileData.mbti} />
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-              <IQSection iq={PROFILE_DATA.iq} />
+              <IQSection iq={profileData.iq} />
               <SkillsRadarSection skills={PROFILE_DATA.skills} />
             </div>
             <WorkEnvironmentSection

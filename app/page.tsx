@@ -1,6 +1,5 @@
-// Entry point → Sign Up / Login Screen
-import AuthScreen from "./sign-up-login-screen/page";
+import HomePageClient from "./home/components/HomePageClient";
 
-export default function HomePage() {
-  return <AuthScreen />;
+export default function RootPage() {
+  return <HomePageClient />;
 }

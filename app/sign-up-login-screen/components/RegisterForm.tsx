@@ -38,13 +38,33 @@ export default function RegisterForm({
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsLoading(true);
-    // BACKEND INTEGRATION: POST /api/auth/register with user data
-    await new Promise((r) => setTimeout(r, 1400));
-    toast.success("Бүртгэл амжилттай! 🎉", {
-      description: `Тавтай морилно уу, ${data.firstName}! Одоо үнэлгээгээ эхэлцгээе.`,
-    });
-    router.push("/career-assessment");
-    setIsLoading(false);
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          grade: data.grade,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        toast.error(json.error || "Бүртгэхэд алдаа гарлаа");
+      } else {
+        toast.success("Бүртгэл амжилттай! 🎉", {
+          description: `Тавтай морилно уу, ${data.firstName}! Одоо үнэлгээгээ эхэлцгээе.`,
+        });
+        router.push("/career-assessment");
+        router.refresh();
+      }
+    } catch {
+      toast.error("Сүлжээний алдаа гарлаа. Дахин оролдоно уу.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

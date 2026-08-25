@@ -26,25 +26,44 @@ export default function AssessmentPageClient() {
   });
   const router = useRouter();
 
+  const saveProgress = (modules: string[]) => {
+    try {
+      localStorage.setItem("completedModules", JSON.stringify(modules));
+    } catch {
+      // ignore
+    }
+  };
+
   const handleMBTIComplete = (mbtiAnswers: Record<string, string>) => {
     setAnswers((prev) => ({ ...prev, mbti: mbtiAnswers }));
+    saveProgress(["mbti"]);
     setCurrentModule("mbti-complete");
   };
 
   const handleIQComplete = (iqAnswers: Record<string, string>) => {
     setAnswers((prev) => ({ ...prev, iq: iqAnswers }));
+    saveProgress(["mbti", "iq"]);
     setCurrentModule("iq-complete");
   };
 
   const handleSkillsComplete = (skillsAnswers: Record<string, string>) => {
     setAnswers((prev) => ({ ...prev, skills: skillsAnswers }));
+    saveProgress(["mbti", "iq", "skills"]);
     setCurrentModule("skills-complete");
   };
 
   const handleFinalSubmit = async () => {
     setCurrentModule("submitting");
-    // BACKEND INTEGRATION: POST /api/assessment/submit with all answers → triggers AI profile generation
-    await new Promise((r) => setTimeout(r, 2000));
+    try {
+      // Save assessment results to NeonDB
+      await fetch("/api/assessment/results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(answers),
+      });
+    } catch {
+      // Continue to results even if save fails
+    }
     router.push("/career-profile-recommendations");
   };
 

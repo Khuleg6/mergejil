@@ -12,11 +12,6 @@ type LoginFormData = {
   remember: boolean;
 };
 
-const DEMO_CREDENTIALS = {
-  email: "batbold@mergezhil.mn",
-  password: "Mergezhil2026!",
-};
-
 export default function LoginForm({
   onSwitchToRegister,
 }: {
@@ -29,35 +24,32 @@ export default function LoginForm({
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<LoginFormData>({ defaultValues: { remember: false } });
 
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
-    // BACKEND INTEGRATION: POST /api/auth/login with email + password
-    await new Promise((r) => setTimeout(r, 1200));
-
-    if (
-      data.email === DEMO_CREDENTIALS.email &&
-      data.password === DEMO_CREDENTIALS.password
-    ) {
-      toast.success("Амжилттай нэвтэрлээ! 🎉", {
-        description: "Тавтай морилно уу, Батболд.",
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: data.email, password: data.password }),
       });
-      router.push("/career-assessment");
-    } else {
-      toast.error(
-        "Буруу нэвтрэх мэдээлэл — доорх демо бүртгэлийг ашиглана уу.",
-      );
+      const json = await res.json();
+      if (!res.ok) {
+        toast.error(json.error || "Нэвтрэхэд алдаа гарлаа");
+      } else {
+        toast.success("Амжилттай нэвтэрлээ! 🎉", {
+          description: `Тавтай морилно уу, ${json.user?.firstName || json.user?.email}!`,
+        });
+        router.push("/career-assessment");
+        router.refresh();
+      }
+    } catch {
+      toast.error("Сүлжээний алдаа гарлаа. Дахин оролдоно уу.");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  };
-
-  const fillDemo = () => {
-    setValue("email", DEMO_CREDENTIALS.email);
-    setValue("password", DEMO_CREDENTIALS.password);
-    toast.info("Демо мэдээлэл оруулагдлаа");
   };
 
   return (
@@ -216,15 +208,6 @@ export default function LoginForm({
           Бүртгүүлэх
         </button>
       </p>
-
-      {/* Fill demo */}
-      <button
-        type="button"
-        onClick={fillDemo}
-        className="w-full mt-3 py-2 text-xs text-muted-foreground hover:text-primary transition-colors underline underline-offset-2"
-      >
-        Демо мэдээлэл автоматаар оруулах
-      </button>
     </form>
   );
 }
