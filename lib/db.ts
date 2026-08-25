@@ -1,8 +1,10 @@
-import { Pool } from "pg";
+import pkg from "pg";
+const { Pool } = pkg;
+type PoolType = InstanceType<typeof Pool>;
 
-let pool: Pool | null = null;
+let pool: PoolType | null = null;
 
-export function getPool(): Pool {
+export function getPool(): PoolType {
   if (!pool) {
     pool = new Pool({
       connectionString: process.env.DATABASE_URL,
