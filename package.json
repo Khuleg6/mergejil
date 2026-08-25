@@ -9,9 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@dhiwise/component-tagger": "latest",
     "@heroicons/react": "^2.2.0",
+    "bcryptjs": "3.0.3",
+    "jsonwebtoken": "9.0.3",
     "lucide-react": "^1.33.0",
-    "next": "16.3.2",
+    "next": "15.3.3",
+    "pg": "8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-hook-form": "^7.86.0",
@@ -20,11 +24,13 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/jsonwebtoken": "9.0.10",
     "@types/node": "^26.2.0",
+    "@types/pg": "8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.3.2",
+    "eslint-config-next": "15.3.3",
     "tailwindcss": "^4",
     "typescript": "5.9.3"
   },

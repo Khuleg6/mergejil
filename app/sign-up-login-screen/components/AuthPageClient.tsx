@@ -63,25 +63,6 @@ export default function AuthPageClient() {
           ) : (
             <RegisterForm onSwitchToLogin={() => setMode("login")} />
           )}
-
-          {/* Demo credentials box */}
-          <div className="mt-6 p-4 bg-info/10 border border-info/20 rounded-xl">
-            <p className="text-xs font-semibold text-info mb-2">
-              Демо бүртгэл:
-            </p>
-            <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-              <span>И-мэйл:</span>
-              <span className="font-mono text-foreground font-medium">
-                batbold@mergezhil.mn
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>Нууц үг:</span>
-              <span className="font-mono text-foreground font-medium">
-                Mergezhil2026!
-              </span>
-            </div>
-          </div>
         </div>
 
         {/* Mobile module preview */}
