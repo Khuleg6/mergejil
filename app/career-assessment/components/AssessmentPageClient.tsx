@@ -76,7 +76,7 @@ export default function AssessmentPageClient() {
             stats={[
               {
                 label: "Хариулсан асуулт",
-                value: `${Object.keys(answers.mbti).filter((k) => k !== "mbtiType").length}/20`,
+                value: `${answers.mbti.mbtiManual === "true" ? 20 : Object.keys(answers.mbti).filter((k) => k !== "mbtiType").length}/20`,
               },
               { label: "Олгосон XP", value: "+120 XP" },
               { label: "Дараагийн модуль", value: "IQ Тест" },

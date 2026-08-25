@@ -89,8 +89,8 @@ export default function MBTIModule({
     // Build a full answers record: include all test answers + mbtiType key
     // This ensures the progress counter in AssessmentHeader counts all answered questions
     const fullAnswers: Record<string, string> = answersToSubmit
-      ? { ...answersToSubmit, mbtiType: type }
-      : { mbtiType: type };
+      ? { ...answersToSubmit, mbtiType: type, mbtiManual: "true" }
+      : { mbtiType: type, mbtiManual: "true" };
     onComplete(fullAnswers);
     setMatchError(null);
     setLoadingMatches(true);
