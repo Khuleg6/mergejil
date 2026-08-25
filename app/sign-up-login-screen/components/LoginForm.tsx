@@ -42,6 +42,9 @@ export default function LoginForm({
       data.email === DEMO_CREDENTIALS.email &&
       data.password === DEMO_CREDENTIALS.password
     ) {
+      // Persist auth state so protected pages can verify login
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userEmail", data.email);
       toast.success("Амжилттай нэвтэрлээ! 🎉", {
         description: "Тавтай морилно уу, Батболд.",
       });
