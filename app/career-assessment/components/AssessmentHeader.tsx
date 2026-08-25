@@ -33,7 +33,7 @@ export default function AssessmentHeader({
   answers: AssessmentAnswers;
 }) {
   const totalAnswered =
-    Object.keys(answers.mbti).length +
+    Object.keys(answers.mbti).filter((k) => k !== "mbtiType").length +
     Object.keys(answers.iq).length +
     Object.keys(answers.skills).length;
   const totalQuestions = 47;

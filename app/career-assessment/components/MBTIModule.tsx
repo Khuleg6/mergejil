@@ -84,9 +84,14 @@ export default function MBTIModule({
   const totalQ = mbtiQuestions.length;
   const progress = Math.round((currentQ / totalQ) * 100);
 
-  const handleSubmitType = useCallback(async (type: string) => {
+  const handleSubmitType = useCallback(async (type: string, answersToSubmit?: Record<string, string>) => {
     if (!type) return;
-    onComplete({ mbtiType: type });
+    // Build a full answers record: include all test answers + mbtiType key
+    // This ensures the progress counter in AssessmentHeader counts all answered questions
+    const fullAnswers: Record<string, string> = answersToSubmit
+      ? { ...answersToSubmit, mbtiType: type }
+      : { mbtiType: type };
+    onComplete(fullAnswers);
     setMatchError(null);
     setLoadingMatches(true);
     try {
@@ -456,7 +461,7 @@ export default function MBTIModule({
           {/* Action buttons */}
           <div className="flex flex-col gap-3">
             <button
-              onClick={() => handleSubmitType(detectedType)}
+              onClick={() => handleSubmitType(detectedType, testAnswers)}
               disabled={loadingMatches}
               className="w-full py-4 rounded-2xl font-bold text-sm transition-all duration-200 hover:opacity-90 active:scale-95 disabled:opacity-60"
               style={{ background: "linear-gradient(135deg, #1b3a6b 0%, #2d5aa0 100%)", color: "#fff" }}
