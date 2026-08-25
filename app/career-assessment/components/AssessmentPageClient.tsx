@@ -54,8 +54,16 @@ export default function AssessmentPageClient() {
 
   const handleFinalSubmit = async () => {
     setCurrentModule("submitting");
-    // BACKEND INTEGRATION: POST /api/assessment/submit with all answers → triggers AI profile generation
-    await new Promise((r) => setTimeout(r, 2000));
+    try {
+      // Save assessment results to NeonDB
+      await fetch("/api/assessment/results", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(answers),
+      });
+    } catch {
+      // Continue to results even if save fails
+    }
     router.push("/career-profile-recommendations");
   };
 

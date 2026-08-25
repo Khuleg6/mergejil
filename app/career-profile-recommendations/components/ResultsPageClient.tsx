@@ -12,48 +12,64 @@ import WorkEnvironmentSection from "./WorkEnvironmentSection";
 import RoadmapSection from "./RoadmapSection";
 import { PROFILE_DATA } from "./resultsData";
 
+interface SessionUser {
+  userId: number;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+interface AssessmentResults {
+  hasResults: boolean;
+  mbtiType?: string;
+  iqScore?: number;
+  skillsScores?: Record<string, number>;
+  completedAt?: string;
+}
+
 export default function ResultsPageClient() {
   const router = useRouter();
   const [authChecked, setAuthChecked] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
+  const [assessmentResults, setAssessmentResults] = useState<AssessmentResults | null>(null);
   const [activeTab, setActiveTab] = useState<
     "profile" | "professions" | "education" | "roadmap"
   >("profile");
 
   useEffect(() => {
-    const auth = localStorage.getItem("isAuthenticated");
-    setIsAuthenticated(auth === "true");
-    setAuthChecked(true);
+    async function checkAuth() {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (res.ok) {
+          const data = await res.json();
+          setIsAuthenticated(true);
+          setSessionUser(data.user);
+          // Fetch assessment results from DB
+          const resultsRes = await fetch("/api/assessment/results");
+          if (resultsRes.ok) {
+            const resultsData = await resultsRes.json();
+            setAssessmentResults(resultsData);
+          }
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch {
+        setIsAuthenticated(false);
+      } finally {
+        setAuthChecked(true);
+      }
+    }
+    checkAuth();
   }, []);
 
   const tabs = [
-    {
-      id: "tab-profile",
-      key: "profile" as const,
-      label: "Профайл",
-      icon: "👤",
-    },
-    {
-      id: "tab-professions",
-      key: "professions" as const,
-      label: "Мэргэжлүүд",
-      icon: "💼",
-    },
-    {
-      id: "tab-education",
-      key: "education" as const,
-      label: "Боловсрол",
-      icon: "🎓",
-    },
-    {
-      id: "tab-roadmap",
-      key: "roadmap" as const,
-      label: "Roadmap",
-      icon: "🗺️",
-    },
+    { id: "tab-profile", key: "profile" as const, label: "Профайл", icon: "👤" },
+    { id: "tab-professions", key: "professions" as const, label: "Мэргэжлүүд", icon: "💼" },
+    { id: "tab-education", key: "education" as const, label: "Боловсрол", icon: "🎓" },
+    { id: "tab-roadmap", key: "roadmap" as const, label: "Roadmap", icon: "🗺️" },
   ];
 
-  // Show nothing while checking auth to avoid flash
   if (!authChecked) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -62,27 +78,22 @@ export default function ResultsPageClient() {
     );
   }
 
-  // Auth gate — show login prompt if not authenticated
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <div className="w-full max-w-md text-center">
-          {/* Lock icon */}
           <div className="w-20 h-20 gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
               <path d="M7 11V7a5 5 0 0 1 10 0v4" />
             </svg>
           </div>
-
           <h1 className="text-2xl font-bold text-foreground mb-2">
             Үр дүнг харахын тулд нэвтэрнэ үү
           </h1>
           <p className="text-muted-foreground text-sm mb-8 leading-relaxed">
             Таны MBTI, IQ болон ур чадварын үр дүн бэлэн байна. Харахын тулд эхлээд нэвтэрнэ үү эсвэл бүртгүүлнэ үү.
           </p>
-
-          {/* Blurred preview hint */}
           <div className="relative mb-8 rounded-2xl overflow-hidden border border-border">
             <div className="p-6 bg-card space-y-3 blur-sm select-none pointer-events-none" aria-hidden="true">
               <div className="flex items-center gap-3">
@@ -105,7 +116,6 @@ export default function ResultsPageClient() {
               </span>
             </div>
           </div>
-
           <div className="flex flex-col gap-3">
             <button
               onClick={() => router.push("/sign-up-login-screen")}
@@ -125,9 +135,26 @@ export default function ResultsPageClient() {
     );
   }
 
+  // Build profile data merging DB results with static profile data
+  const profileData = {
+    ...PROFILE_DATA,
+    user: {
+      ...PROFILE_DATA.user,
+      name: sessionUser
+        ? `${sessionUser.lastName || ""} ${sessionUser.firstName || ""}`.trim() || sessionUser.email
+        : PROFILE_DATA.user.name,
+    },
+    mbti: assessmentResults?.mbtiType
+      ? { ...PROFILE_DATA.mbti, type: assessmentResults.mbtiType }
+      : PROFILE_DATA.mbti,
+    iq: assessmentResults?.iqScore
+      ? { ...PROFILE_DATA.iq, score: assessmentResults.iqScore }
+      : PROFILE_DATA.iq,
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <ResultsHeader user={PROFILE_DATA.user} />
+      <ResultsHeader user={profileData.user} />
 
       {/* Tab navigation */}
       <div className="sticky top-0 z-30 bg-card border-b border-border">
@@ -153,9 +180,9 @@ export default function ResultsPageClient() {
       <main className="max-w-screen-2xl mx-auto px-4 lg:px-8 xl:px-10 py-8">
         {activeTab === "profile" && (
           <div className="space-y-8">
-            <ProfileHeroSection mbti={PROFILE_DATA.mbti} />
+            <ProfileHeroSection mbti={profileData.mbti} />
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-              <IQSection iq={PROFILE_DATA.iq} />
+              <IQSection iq={profileData.iq} />
               <SkillsRadarSection skills={PROFILE_DATA.skills} />
             </div>
             <WorkEnvironmentSection
