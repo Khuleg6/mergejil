@@ -1,53 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-// no icon imports needed
-
-const DIMENSION_LABELS: Record<
-  string,
-  { label: string; color: string; bg: string }
-> = {
-  I: {
-    label: "Дотогшоо",
-    color: "text-violet-700",
-    bg: "bg-violet-50 border-violet-200",
-  },
-  E: {
-    label: "Гадагшаа",
-    color: "text-blue-700",
-    bg: "bg-blue-50 border-blue-200",
-  },
-  S: {
-    label: "Мэдрэхүй",
-    color: "text-emerald-700",
-    bg: "bg-emerald-50 border-emerald-200",
-  },
-  N: {
-    label: "Зөн совин",
-    color: "text-teal-700",
-    bg: "bg-teal-50 border-teal-200",
-  },
-  T: {
-    label: "Сэтгэхүй",
-    color: "text-blue-700",
-    bg: "bg-blue-50 border-blue-200",
-  },
-  F: {
-    label: "Мэдрэмж",
-    color: "text-pink-700",
-    bg: "bg-pink-50 border-pink-200",
-  },
-  J: {
-    label: "Шүүлт",
-    color: "text-amber-700",
-    bg: "bg-amber-50 border-amber-200",
-  },
-  P: {
-    label: "Хүлээн авах",
-    color: "text-orange-700",
-    bg: "bg-orange-50 border-orange-200",
-  },
-};
+import { mbtiQuestions } from "./assessmentData";
 
 const MBTI_TYPES = [
   "ISTJ",
@@ -68,6 +22,19 @@ const MBTI_TYPES = [
   "ENTJ",
 ];
 
+function calculateMBTI(answers: Record<string, string>): string {
+  const counts: Record<string, number> = { I: 0, E: 0, S: 0, N: 0, T: 0, F: 0, J: 0, P: 0 };
+  Object.values(answers).forEach((dim) => {
+    if (dim && counts[dim] !== undefined) counts[dim]++;
+  });
+  return (
+    (counts.E >= counts.I ? "E" : "I") +
+    (counts.S >= counts.N ? "S" : "N") +
+    (counts.T >= counts.F ? "T" : "F") +
+    (counts.J >= counts.P ? "J" : "P")
+  );
+}
+
 export default function MBTIModule({
   onComplete,
 }: {
@@ -77,6 +44,85 @@ export default function MBTIModule({
   const [matches, setMatches] = useState<any[] | null>(null);
   const [loadingMatches, setLoadingMatches] = useState(false);
   const [matchError, setMatchError] = useState<string | null>(null);
+
+  // Inline test state
+  const [testMode, setTestMode] = useState(false);
+  const [currentQ, setCurrentQ] = useState(0);
+  const [testAnswers, setTestAnswers] = useState<Record<string, string>>({});
+  const [testDone, setTestDone] = useState(false);
+  const [detectedType, setDetectedType] = useState<string>("");
+
+  const handleSubmitManual = async (type: string) => {
+    if (!type) return;
+    onComplete({ mbtiType: type });
+    setMatchError(null);
+    setMatches(null);
+    setLoadingMatches(true);
+    try {
+      const res = await fetch("/api/profile/match", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ mbtiType: type, top: 6 }),
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        setMatchError(text || `Server error ${res.status}`);
+        return;
+      }
+      const contentType = res.headers.get("content-type") || "";
+      let data: any;
+      if (contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        setMatchError(text || "Unexpected non-JSON response from server");
+        return;
+      }
+      if (data?.matches) {
+        setMatches(data.matches);
+      } else if (data?.error) {
+        setMatchError(data.error);
+      } else {
+        setMatchError("Үр дүн олдсонгүй");
+      }
+    } catch (e) {
+      console.error(e);
+      setMatchError("Серверт холбогдоход алдаа гарлаа");
+    } finally {
+      setLoadingMatches(false);
+    }
+  };
+
+  const handleTestAnswer = (dimension: string) => {
+    const q = mbtiQuestions[currentQ];
+    const newAnswers = { ...testAnswers, [q.id]: dimension };
+    setTestAnswers(newAnswers);
+
+    if (currentQ + 1 < mbtiQuestions.length) {
+      setCurrentQ(currentQ + 1);
+    } else {
+      const result = calculateMBTI(newAnswers);
+      setDetectedType(result);
+      setManualType(result);
+      setTestDone(true);
+      setTestMode(false);
+    }
+  };
+
+  const handleUseDetectedType = () => {
+    handleSubmitManual(detectedType);
+  };
+
+  const handleRestartTest = () => {
+    setTestMode(false);
+    setTestDone(false);
+    setCurrentQ(0);
+    setTestAnswers({});
+    setDetectedType("");
+  };
+
+  const question = mbtiQuestions[currentQ];
+  const progress = Math.round((currentQ / mbtiQuestions.length) * 100);
 
   return (
     <div className="flex-1 flex flex-col items-center justify-start py-8 px-4">
@@ -98,57 +144,7 @@ export default function MBTIModule({
               ))}
             </select>
             <button
-              onClick={async () => {
-                if (!manualType) return;
-                const type = String(manualType || "")
-                  .trim()
-                  .toUpperCase();
-                // keep existing contract
-                onComplete({ mbtiType: type });
-
-                // fetch matches and show them
-                setMatchError(null);
-                setMatches(null);
-                setLoadingMatches(true);
-                try {
-                  const res = await fetch("/api/profile/match", {
-                    method: "POST",
-                    headers: { "content-type": "application/json" },
-                    body: JSON.stringify({ mbtiType: type, top: 6 }),
-                  });
-
-                  if (!res.ok) {
-                    const text = await res.text();
-                    setMatchError(text || `Server error ${res.status}`);
-                    return;
-                  }
-
-                  const contentType = res.headers.get("content-type") || "";
-                  let data: any;
-                  if (contentType.includes("application/json")) {
-                    data = await res.json();
-                  } else {
-                    const text = await res.text();
-                    setMatchError(
-                      text || "Unexpected non-JSON response from server",
-                    );
-                    return;
-                  }
-
-                  if (data?.matches) {
-                    setMatches(data.matches);
-                  } else if (data?.error) {
-                    setMatchError(data.error);
-                  } else {
-                    setMatchError("Үр дүн олдсонгүй");
-                  }
-                } catch (e) {
-                  console.error(e);
-                  setMatchError("Серверт холбогдоход алдаа гарлаа");
-                } finally {
-                  setLoadingMatches(false);
-                }
-              }}
+              onClick={() => handleSubmitManual(manualType)}
               className="px-4 py-2 bg-primary text-white rounded-md"
             >
               Оруулах
@@ -159,26 +155,95 @@ export default function MBTIModule({
           </p>
         </div>
 
-        {/* External 16Personalities option */}
-        <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 card-shadow-md mb-6">
-          <h3 className="text-lg font-semibold mb-3">
-            16Personalities тестээр өгөх
-          </h3>
-          <p className="text-sm text-muted-foreground mb-4">
-            16Personalities-аас авсан үр дүн байгаа бол дээрх хэсэгт оруул!
-            Хэрэв байхгүй бол тестээ өгнө үү!.
-          </p>
-          <div className="flex gap-2">
-            <a
-              href="https://16personalities.com"
-              target="_blank"
-              rel="noreferrer"
-              className="px-4 py-2 bg-secondary rounded-md"
+        {/* Inline MBTI test */}
+        {!testMode && !testDone && (
+          <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 card-shadow-md mb-6">
+            <h3 className="text-lg font-semibold mb-3">
+              16Personalities тестээр өгөх
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              16Personalities-аас авсан үр дүн байгаа бол дээрх хэсэгт оруул!
+              Хэрэв байхгүй бол тестээ өгнө үү!
+            </p>
+            <button
+              onClick={() => { setTestMode(true); setCurrentQ(0); setTestAnswers({}); }}
+              className="px-4 py-2 border border-border rounded-md hover:bg-secondary transition-colors text-sm"
             >
               Тест рүү очих
-            </a>
+            </button>
           </div>
-        </div>
+        )}
+
+        {/* Test in progress */}
+        {testMode && !testDone && (
+          <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 card-shadow-md mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">MBTI Тест</h3>
+              <span className="text-sm text-muted-foreground">
+                {currentQ + 1} / {mbtiQuestions.length}
+              </span>
+            </div>
+
+            {/* Progress bar */}
+            <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
+              <div
+                className="bg-primary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+
+            <p className="text-base font-medium mb-2">{question.text}</p>
+            {question.subtext && (
+              <p className="text-sm text-muted-foreground mb-4">{question.subtext}</p>
+            )}
+
+            <div className="flex flex-col gap-3 mt-4">
+              {question.options.map((opt) => (
+                <button
+                  key={opt.id}
+                  onClick={() => handleTestAnswer(opt.dimension || "")}
+                  className="w-full text-left px-4 py-3 border border-border rounded-xl hover:bg-secondary hover:border-primary transition-all duration-150 text-sm"
+                >
+                  {opt.text}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={handleRestartTest}
+              className="mt-4 text-xs text-muted-foreground underline"
+            >
+              Цуцлах
+            </button>
+          </div>
+        )}
+
+        {/* Test done — show result */}
+        {testDone && (
+          <div className="bg-card border border-border rounded-2xl p-6 sm:p-8 card-shadow-md mb-6">
+            <h3 className="text-lg font-semibold mb-2">Таны MBTI төрөл</h3>
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-4xl font-bold text-primary">{detectedType}</span>
+              <p className="text-sm text-muted-foreground">
+                Тест дууссан! Таны хариулт дээр үндэслэн тооцоолсон MBTI төрөл.
+              </p>
+            </div>
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={handleUseDetectedType}
+                className="px-4 py-2 bg-primary text-white rounded-md text-sm"
+              >
+                Энэ төрлийг ашиглах
+              </button>
+              <button
+                onClick={handleRestartTest}
+                className="px-4 py-2 border border-border rounded-md text-sm hover:bg-secondary transition-colors"
+              >
+                Дахин өгөх
+              </button>
+            </div>
+          </div>
+        )}
 
         {loadingMatches && <p className="text-sm mt-3">Ачааллаж байна...</p>}
         {matchError && (
@@ -211,8 +276,6 @@ export default function MBTIModule({
             </ul>
           </div>
         )}
-
-        {/* End MBTI input cards */}
       </div>
     </div>
   );
