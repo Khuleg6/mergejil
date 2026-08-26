@@ -206,13 +206,12 @@ export default function LoginForm({
 
       {/* Demo account button */}
       <p className="text-center text-sm text-muted-foreground mt-3">
-        Демо акаунт байна уу?{" "}
         <button
           type="button"
           onClick={fillDemoAccount}
-          className="text-primary font-semibold hover:underline"
+          className="text-primary font-normal hover:underline"
         >
-          Демо аккаунтаар нэвтрэх
+          Demo account
         </button>
       </p>
 
