@@ -48,7 +48,7 @@ export function matchCareers(mbtiType: string, top = 5): MatchResult[] {
   const results: MatchResult[] = (careerProfiles as CareerProfile[])
     .map((c) => {
       const ideal = normalizeMBTIRaw(c.ideal_mbti || "").substring(0, 4);
-      let matchedLetters: string[] = [];
+      const matchedLetters: string[] = [];
       for (let i = 0; i < 4; i++) {
         if (base[i] === ideal[i]) matchedLetters.push(base[i]);
       }
@@ -69,9 +69,10 @@ export function matchCareers(mbtiType: string, top = 5): MatchResult[] {
 export function safeMatch(mbtiType: string, top = 5) {
   try {
     return matchCareers(mbtiType, top);
-  } catch (e) {
+  } catch {
     return [];
   }
 }
 
-export default { matchCareers, safeMatch };
+const mbtiMatch = { matchCareers, safeMatch };
+export default mbtiMatch;

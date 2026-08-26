@@ -19,6 +19,7 @@
         "sonner": "^2.0.8",
       },
       "devDependencies": {
+        "@eslint/eslintrc": "^3.3.6",
         "@tailwindcss/postcss": "^4",
         "@types/jsonwebtoken": "9.0.10",
         "@types/node": "^26.2.0",
