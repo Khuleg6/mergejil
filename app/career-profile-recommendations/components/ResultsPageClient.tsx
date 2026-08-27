@@ -35,7 +35,6 @@ type LoginFormData = {
 };
 
 function InlineLoginForm({ onSuccess }: { onSuccess: () => void }) {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -66,7 +65,6 @@ function InlineLoginForm({ onSuccess }: { onSuccess: () => void }) {
         setErrorMsg(json.error || "Нэвтрэхэд алдаа гарлаа");
       } else {
         onSuccess();
-        router.refresh();
       }
     } catch {
       setErrorMsg("Сүлжээний алдаа гарлаа. Дахин оролдоно уу.");
