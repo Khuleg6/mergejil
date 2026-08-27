@@ -183,6 +183,31 @@ export default function ResultsPageClient() {
         const data = await res.json();
         setIsAuthenticated(true);
         setSessionUser(data.user);
+
+        // Check for pending assessment answers saved before login
+        let pendingAnswers: string | null = null;
+        try {
+          pendingAnswers = localStorage.getItem("pendingAssessmentAnswers");
+        } catch {
+          // ignore
+        }
+
+        if (pendingAnswers) {
+          try {
+            const answers = JSON.parse(pendingAnswers);
+            const submitRes = await fetch("/api/assessment/results", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(answers),
+            });
+            if (submitRes.ok) {
+              localStorage.removeItem("pendingAssessmentAnswers");
+            }
+          } catch {
+            // ignore submit errors, still try to load results
+          }
+        }
+
         const resultsRes = await fetch("/api/assessment/results");
         if (resultsRes.ok) {
           const resultsData = await resultsRes.json();

@@ -55,14 +55,21 @@ export default function AssessmentPageClient() {
   const handleFinalSubmit = async () => {
     setCurrentModule("submitting");
     try {
+      // Always save answers to localStorage so they can be re-submitted after login
+      localStorage.setItem("pendingAssessmentAnswers", JSON.stringify(answers));
+
       // Save assessment results to NeonDB
-      await fetch("/api/assessment/results", {
+      const res = await fetch("/api/assessment/results", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(answers),
       });
+      // If saved successfully, clear the pending answers
+      if (res.ok) {
+        localStorage.removeItem("pendingAssessmentAnswers");
+      }
     } catch {
-      // Continue to results even if save fails
+      // Continue to results even if save fails; pending answers remain in localStorage
     }
     router.push("/career-profile-recommendations");
   };
