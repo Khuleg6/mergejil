@@ -48,7 +48,7 @@ function readLocalResults(): AssessmentResults | null {
 }
 // ─────────────────────────────────────────────────────────────────────────────
 
-function InlineLoginForm({ onSuccess }: { onSuccess: () => void }) {
+function InlineLoginForm({ onSuccess }: { onSuccess: (user: SessionUser) => void }) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
@@ -78,7 +78,12 @@ function InlineLoginForm({ onSuccess }: { onSuccess: () => void }) {
       if (!res.ok) {
         setErrorMsg(json.error || "Нэвтрэхэд алдаа гарлаа");
       } else {
-        onSuccess();
+        onSuccess({
+          userId: json.user?.id ?? 0,
+          email: json.user?.email ?? data.email,
+          firstName: json.user?.firstName,
+          lastName: json.user?.lastName,
+        });
       }
     } catch {
       setErrorMsg("Сүлжээний алдаа гарлаа. Дахин оролдоно уу.");
@@ -258,6 +263,12 @@ export default function ResultsPageClient() {
     }
   };
 
+  const handleLoginSuccess = async (user: SessionUser) => {
+    setSessionUser(user);
+    setIsAuthenticated(true);
+    await loadResults(user.userId);
+  };
+
   useEffect(() => {
     checkAuth();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -319,7 +330,7 @@ export default function ResultsPageClient() {
 
           {/* Inline login form */}
           <div className="bg-card border border-border rounded-2xl p-6 text-left mb-4">
-            <InlineLoginForm onSuccess={checkAuth} />
+            <InlineLoginForm onSuccess={handleLoginSuccess} />
           </div>
 
           <button
