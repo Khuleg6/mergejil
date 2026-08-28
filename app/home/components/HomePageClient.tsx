@@ -199,53 +199,64 @@ export default function HomePageClient() {
           />
 
           <div className="max-w-screen-xl mx-auto px-4 lg:px-8 py-20 lg:py-28 relative z-10">
-            <div className="max-w-3xl">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent/20 border border-accent/30 rounded-full text-accent text-xs font-semibold mb-6">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-                  <path d="M6 1L7.5 4.5L11 5L8.5 7.5L9 11L6 9.5L3 11L3.5 7.5L1 5L4.5 4.5L6 1Z" />
-                </svg>
-                Монголын #1 Карьер удирдамжийн платформ
-              </div>
-
-              <h1 className="text-white font-bold leading-tight mb-5" style={{ fontSize: "clamp(2rem, 5vw, 3.25rem)" }}>
-                Таны нуугдмал{" "}
-                <span className="text-accent">чадварыг</span>
-                <br />
-                илрүүлье
-              </h1>
-
-              <p className="text-white/70 text-lg leading-relaxed mb-8 max-w-xl">
-                MBTI хувь хүний онцлог, IQ танин мэдэхүйн чадвар, практик ур чадварыг нэгтгэн таны хамгийн тохиромжтой мэргэжлийг тодорхойлно.
-              </p>
-
-              {/* CTA buttons */}
-              <div className="flex flex-wrap gap-3 mb-12">
-                <Link
-                  href="/career-assessment"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-primary font-bold rounded-xl hover:bg-accent/90 active:scale-[0.98] transition-all duration-150 card-shadow"
-                >
-                  Үнэлгээ эхлэх
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M3 8H13M9 4L13 8L9 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              <div className="max-w-3xl">
+                {/* Badge */}
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent/20 border border-accent/30 rounded-full text-accent text-xs font-semibold mb-6">
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                    <path d="M6 1L7.5 4.5L11 5L8.5 7.5L9 11L6 9.5L3 11L3.5 7.5L1 5L4.5 4.5L6 1Z" />
                   </svg>
-                </Link>
-                <Link
-                  href="/sign-up-login-screen"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/15 transition-all duration-150"
-                >
-                  Бүртгүүлэх
-                </Link>
+                  Монголын #1 Карьер удирдамжийн платформ
+                </div>
+
+                <h1 className="text-white font-bold leading-tight mb-5" style={{ fontSize: "clamp(2rem, 5vw, 3.25rem)" }}>
+                  Таны нуугдмал{" "}
+                  <span className="text-accent">чадварыг</span>
+                  <br />
+                  илрүүлье
+                </h1>
+
+                <p className="text-white/70 text-lg leading-relaxed mb-8 max-w-xl">
+                  MBTI хувь хүний онцлог, IQ танин мэдэхүйн чадвар, практик ур чадварыг нэгтгэн таны хамгийн тохиромжтой мэргэжлийг тодорхойлно.
+                </p>
+
+                {/* CTA buttons */}
+                <div className="flex flex-wrap gap-3 mb-12">
+                  <Link
+                    href="/career-assessment"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-accent text-primary font-bold rounded-xl hover:bg-accent/90 active:scale-[0.98] transition-all duration-150 card-shadow"
+                  >
+                    Үнэлгээ эхлэх
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M3 8H13M9 4L13 8L9 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href="/sign-up-login-screen"
+                    className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/15 transition-all duration-150"
+                  >
+                    Бүртгүүлэх
+                  </Link>
+                </div>
+
+                {/* Stats */}
+                <div className="flex flex-wrap gap-8">
+                  {STATS?.map((stat) => (
+                    <div key={`hero-stat-${stat?.label}`}>
+                      <div className="text-white font-bold text-2xl tabular-nums">{stat?.value}</div>
+                      <div className="text-white/50 text-xs mt-0.5">{stat?.label}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
-              {/* Stats */}
-              <div className="flex flex-wrap gap-8">
-                {STATS?.map((stat) => (
-                  <div key={`hero-stat-${stat?.label}`}>
-                    <div className="text-white font-bold text-2xl tabular-nums">{stat?.value}</div>
-                    <div className="text-white/50 text-xs mt-0.5">{stat?.label}</div>
-                  </div>
-                ))}
+              {/* Hero illustration */}
+              <div className="hidden lg:flex items-center justify-center">
+                <img
+                  src="/assets/hero-illustration.svg"
+                  alt="Career assessment illustration showing a person at a crossroads of career paths with skill badges"
+                  className="w-full max-w-md opacity-90"
+                />
               </div>
             </div>
           </div>
