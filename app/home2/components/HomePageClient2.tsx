@@ -144,6 +144,15 @@ export default function HomePageClient2() {
                 {item}
               </a>
             ))}
+            <Link
+              href="/career-confirmation-test"
+              className="text-xs font-medium transition-colors"
+              style={{ color: "rgba(226,232,240,0.55)" }}
+              onMouseEnter={(e) => ((e.target as HTMLElement).style.color = "#f1f5f9")}
+              onMouseLeave={(e) => ((e.target as HTMLElement).style.color = "rgba(226,232,240,0.55)")}
+            >
+              Мэргэжил шалгах
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -685,6 +694,89 @@ export default function HomePageClient2() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── CAREER CONFIRMATION SECTION ── */}
+        <section className="py-20 lg:py-28 relative overflow-hidden" style={{ background: "#080c14" }}>
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: "radial-gradient(ellipse at 70% 50%, rgba(110,231,183,0.05) 0%, transparent 60%)" }}
+          />
+          <div className="max-w-screen-xl mx-auto px-5 lg:px-10 relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+              {/* Left */}
+              <div>
+                <div
+                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold mb-6"
+                  style={{ background: "rgba(110,231,183,0.1)", border: "1px solid rgba(110,231,183,0.25)", color: "#6ee7b7" }}
+                >
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#6ee7b7", boxShadow: "0 0 6px #6ee7b7" }} />
+                  Шинэ функц
+                </div>
+                <h2
+                  className="font-black leading-tight mb-5"
+                  style={{ fontSize: "clamp(1.8rem,4vw,2.8rem)", color: "#f8fafc", letterSpacing: "-0.02em" }}
+                >
+                  Сонирхсон мэргэжлээ{" "}
+                  <span style={{ color: "#6ee7b7" }}>баталгаажуул</span>
+                </h2>
+                <p className="text-sm leading-relaxed mb-8" style={{ color: "rgba(226,232,240,0.5)", maxWidth: 460 }}>
+                  Аль мэргэжлийг сонирхож байгаагаа сонгоод, тусгайлан боловсруулсан 5 асуултын тестийг өгнө үү.
+                  Тест нь тухайн мэргэжил танд үнэхээр тохирч байгаа эсэхийг тодорхойлж, итгэлтэй байхад тусална.
+                </p>
+                <div className="flex flex-col gap-3 mb-8">
+                  {[
+                    { icon: "🎯", text: "8 мэргэжлийн чиглэлээс сонгох боломжтой" },
+                    { icon: "⚡", text: "5 асуулт — 3 минутад дуусна" },
+                    { icon: "📊", text: "Тохирлын хувь болон чадварын дүн шинжилгээ" },
+                  ].map((item) => (
+                    <div key={item.text} className="flex items-center gap-3">
+                      <span className="text-lg">{item.icon}</span>
+                      <span className="text-sm" style={{ color: "rgba(226,232,240,0.65)" }}>{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+                <Link
+                  href="/career-confirmation-test"
+                  className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-xl font-bold text-sm transition-all"
+                  style={{ background: "#6ee7b7", color: "#080c14", boxShadow: "0 0 30px rgba(110,231,183,0.2)" }}
+                >
+                  Мэргэжил шалгах
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                    <path d="M2 7H12M8 3L12 7L8 11" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </Link>
+              </div>
+
+              {/* Right — career cards preview */}
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { emoji: "💻", name: "Програм хангамжийн инженер", accent: "#6ee7b7", pct: 94 },
+                  { emoji: "🎯", name: "Бүтээгдэхүүний менежер", accent: "#f5a623", pct: 78 },
+                  { emoji: "🎨", name: "UX Дизайнер", accent: "#a78bfa", pct: 85 },
+                  { emoji: "📊", name: "Өгөгдлийн шинжээч", accent: "#fbbf24", pct: 71 },
+                ].map((c) => (
+                  <div
+                    key={c.name}
+                    className="rounded-2xl p-4"
+                    style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.07)" }}
+                  >
+                    <div className="text-2xl mb-2">{c.emoji}</div>
+                    <div className="text-xs font-semibold mb-3 leading-snug" style={{ color: "#f1f5f9" }}>
+                      {c.name}
+                    </div>
+                    <div className="flex items-center justify-between text-xs mb-1.5">
+                      <span style={{ color: "rgba(226,232,240,0.4)" }}>Тохирол</span>
+                      <span className="font-bold" style={{ color: c.accent }}>{c.pct}%</span>
+                    </div>
+                    <div className="h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+                      <div className="h-full rounded-full" style={{ width: `${c.pct}%`, background: c.accent }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </section>
